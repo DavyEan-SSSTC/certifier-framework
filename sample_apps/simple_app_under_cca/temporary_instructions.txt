@@ -11,6 +11,11 @@ popd
 
 export CCA_EXAMPLE_DIR=$CERTIFIER_PROTOTYPE/sample_apps/simple_app_under_cca
 export CCA_SRC=$CERTIFIER_PROTOTYPE/src/cca
+export ISLET_PATH=$CERTIFIER_PROTOTYPE/third_party/islet
+export ISLET_LIB=$ISLET_PATH/lib
+
+sudo ldconfig $ISLET_LIB
+
 
 env | grep -E 'CERTIFIER_PROTOTYPE|CCA_EXAMPLE_DIR|CCA_SRC'
 
