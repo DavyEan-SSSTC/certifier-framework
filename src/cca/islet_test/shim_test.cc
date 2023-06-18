@@ -38,16 +38,17 @@ bool attestation_test() {
   memset(what_was_said, 0, sizeof(what_was_said));
 
   std::string what_to_say("User Custom data");
-  if (!cca_Attest(what_to_say.size(), (byte*)what_to_say.c_str(), &report_len, report))
+
+  if (!cca_Attest(what_to_say.size(), (byte*)what_to_say.data(), &report_len, report))
     return false;
 
-  if (!cca_Verify(what_to_say.size(), what_was_said, report_len, report,
+  if (!cca_Verify(what_to_say.size(), (byte*)what_to_say.data(), report_len, report,
                   &measurement_len, measurement))
     return false;
 
   printf("report size: %d\n", report_len);
   print_buf(report_len, report);
-  printf("What was said: %s\n", (char*) what_was_said);
+  printf("What was said originally: %s\n", (char*) what_to_say.c_str());
   printf("Measurement: ");
   for (int i = 0; i < measurement_len; i++) {
     printf("%02X", measurement[i]);

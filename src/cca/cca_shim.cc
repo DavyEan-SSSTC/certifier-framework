@@ -47,13 +47,20 @@ bool cca_Attest(const int what_to_say_size, byte* what_to_say,
   return rv == ISLET_SUCCESS;
 }
 
+#if 0
+static void print_buf(int sz, byte* buf) {
+  for (int i = 0; i < sz; i++)
+    printf("%02x", buf[i]);
+  printf("\n");
+}
+#endif
+
 bool cca_Verify(const int what_to_say_size, byte* what_to_say,
                 const int attestation_size, byte* attestation,
                 int* measurement_out_size, byte* measurement_out) {
   byte claims[BUFFER_SIZE];
 
   int claims_len = 0;
-  int user_data_len = 0;
 
   memset(claims, 0, sizeof(claims));
 
@@ -61,8 +68,21 @@ bool cca_Verify(const int what_to_say_size, byte* what_to_say,
   if (rv != ISLET_SUCCESS)
     return false;
 
-  rv = islet_parse(CLAIM_TITLE_USER_DATA, claims, claims_len, what_to_say, &user_data_len);
+  int len = digest_output_byte_size("sha-256");
+  byte cca_what_to_say_expected[len];
+  if (!digest_message("sha-256", what_to_say, what_to_say_size,
+        cca_what_to_say_expected, len)) {
+    printf("cca_Verify: Can't digest what_to_say\n");
+    return false;
+  }
+
+  byte cca_what_to_say_returned[2*len];
+  int user_data_len = len;
+  rv = islet_parse(CLAIM_TITLE_USER_DATA, claims, claims_len, cca_what_to_say_returned, &user_data_len);
   if (rv != ISLET_SUCCESS)
+    return false;
+
+  if (memcmp(cca_what_to_say_returned, cca_what_to_say_expected, len) != 0)
     return false;
 
   rv = islet_parse(CLAIM_TITLE_RIM, claims, claims_len, measurement_out,
