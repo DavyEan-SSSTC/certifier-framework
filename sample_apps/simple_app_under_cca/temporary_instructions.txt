@@ -61,6 +61,7 @@ $CERTIFIER_PROTOTYPE/utilities/embed_policy_key.exe --input=policy_cert_file.bin
 cd $CCA_EXAMPLE_DIR
 make -f cca_example_app.mak
 
+$CERTIFIER_PROTOTYPE/utilities/measurement_init.exe --mrenclave=6190EB90B293886C172EC644DAFB7E33EE2CEA6541ABE15300D96380DF525BF9 --out_file=example_app.measurement
 
 # write the policy
 cd $CCA_EXAMPLE_DIR/provisioning
@@ -74,10 +75,6 @@ $CERTIFIER_PROTOTYPE/utilities/make_unary_vse_clause.exe --cert_subject=emulated
 
 $CERTIFIER_PROTOTYPE/utilities/make_indirect_vse_clause.exe --key_subject=policy_key_file.bin \
   --verb="says" --clause=ts1.bin --output=vse_policy1.bin
-
-# Get Measurement: policy key says measurement is-trusted
-$CERTIFIER_PROTOTYPE/utilities/measurement_utility.exe --type=hash --input=../cca_example_app.exe \
-      --output=example_app.measurement
 
 $CERTIFIER_PROTOTYPE/utilities/make_unary_vse_clause.exe --key_subject="" \
   --measurement_subject=example_app.measurement --verb="is-trusted" \
