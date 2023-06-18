@@ -16,6 +16,12 @@
 
 #include "../cca.h"
 
+static void print_buf(int sz, byte* buf) {
+  for (int i = 0; i < sz; i++)
+    printf("%02x", buf[i]);
+  printf("\n");
+}
+
 // Some reasonable size to allocate an attestation report on-stack buffers.
 // Typical attestation report size is over 1K.
 #define BUFFER_SIZE 2048
@@ -39,6 +45,8 @@ bool attestation_test() {
                   &measurement_len, measurement))
     return false;
 
+  printf("report size: %d\n", report_len);
+  print_buf(report_len, report);
   printf("What was said: %s\n", (char*) what_was_said);
   printf("Measurement: ");
   for (int i = 0; i < measurement_len; i++) {
